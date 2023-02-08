@@ -48,6 +48,7 @@ const createAccount = () => {
 // Sair
 const sair = () => {
   console.log(chalk.bgBlue.black("Obrigado por usar o Accounts!"));
+  process.exit()
 };
 
 // construção da conta
