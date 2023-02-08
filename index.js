@@ -28,6 +28,7 @@ const operation = () => {
       if (action === "Criar conta") {
         createAccount();
       } else if (action === "Depositar") {
+        deposit();
       } else if (action === "Sacar") {
       } else if (action === "Sair") {
         sair();
@@ -37,18 +38,103 @@ const operation = () => {
     .catch((err) => console.log(err));
 };
 
+const checkAccount = (accountName) => {
+  if (!fs.existsSync(`accounts/${accountName}.json`)) {
+    console.log(
+      chalk.bgRed.black("Esta conta não existe, escolha outro nome!")
+    );
+    return false;
+  }
+  return true;
+};
+
+const addAmount = (accountName, amount) => {
+  const account = getAccount(accountName);
+  if (!amount) {
+    console.log(
+      chalk.bgRed.black("Ocorreu um erro, tente novamente mais tarde!")
+    );
+  }
+
+  account.balance = parseFloat(account.balance) + parseFloat(amount);
+  fs.writeFileSync(
+    `accounts/${accountName}.json`,
+    JSON.stringify(account),
+    (err) => {
+      console.log(err);
+    }
+  );
+
+  console.log(
+    chalk.green(
+      `Foi depositado o valor de ${parseFloat(amount).toLocaleString("pt-br", {
+        style: "currency",
+        currency: "BRL",
+      })}`
+    )
+  );
+};
+
+const getAccount = (accountName) => {
+  const accountJSON = fs.readFileSync(`accounts/${accountName}.json`, {
+    encoding: "utf-8",
+    flag: "r",
+  });
+  return JSON.parse(accountJSON);
+};
+
+// Depositar
+const deposit = () => {
+  inquirer
+    .prompt([
+      {
+        name: "accountName",
+        message: "Qual o nome da sua conta? ",
+      },
+    ])
+    .then((answer) => {
+      const accountName = answer["accountName"];
+
+      // Verificar se a conta existe
+      if (!checkAccount(accountName)) {
+        return deposit();
+      }
+
+      inquirer
+        .prompt([
+          {
+            name: "amount",
+            message: "Quanto você deseja depositar? ",
+          },
+        ])
+        .then((answer) => {
+          const amount = answer["amount"];
+
+          // adicionando o saldo
+          addAmount(accountName, amount);
+          operation();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+// Sair
+const sair = () => {
+  console.log(chalk.bgBlue.black("Obrigado por usar o Accounts!"));
+  process.exit();
+};
+
 // criar conta
 const createAccount = () => {
   console.log(chalk.bgGreen.black("Parabéns por escolher o nosso banco!"));
   console.log(chalk.green("Defina as opções da sua conta a seguir"));
 
   buildAccount();
-};
-
-// Sair
-const sair = () => {
-  console.log(chalk.bgBlue.black("Obrigado por usar o Accounts!"));
-  process.exit()
 };
 
 // construção da conta
