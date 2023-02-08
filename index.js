@@ -27,6 +27,11 @@ const operation = () => {
 
       if (action === "Criar conta") {
         createAccount();
+      } else if (action === "Depositar") {
+      } else if (action === "Sacar") {
+      } else if (action === "Sair") {
+        sair();
+      } else if (action === "Consultar saldo") {
       }
     })
     .catch((err) => console.log(err));
@@ -38,6 +43,11 @@ const createAccount = () => {
   console.log(chalk.green("Defina as opções da sua conta a seguir"));
 
   buildAccount();
+};
+
+// Sair
+const sair = () => {
+  console.log(chalk.bgBlue.black("Obrigado por usar o Accounts!"));
 };
 
 // construção da conta
