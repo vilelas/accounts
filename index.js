@@ -2,8 +2,12 @@
 const chalk = require("chalk");
 const inquirer = require("inquirer");
 
-// módulos internos
+// core modules
 const fs = require("fs");
+
+// módulos internos
+const getAccount = require("./utils/getAccount")
+const checkAccount = require("./utils/checkAccount")
 
 // função principal
 const operation = () => {
@@ -88,16 +92,6 @@ const buildAccount = () => {
 };
 
 // Depositar
-const checkAccount = (accountName) => {
-  if (!fs.existsSync(`accounts/${accountName}.json`)) {
-    console.log(
-      chalk.bgRed.black("Esta conta não existe, escolha outro nome!")
-    );
-    return false;
-  }
-  return true;
-};
-
 const addAmount = (accountName, amount) => {
   const account = getAccount(accountName);
   if (!amount) {
@@ -123,14 +117,6 @@ const addAmount = (accountName, amount) => {
       })}`
     )
   );
-};
-
-const getAccount = (accountName) => {
-  const accountJSON = fs.readFileSync(`accounts/${accountName}.json`, {
-    encoding: "utf-8",
-    flag: "r",
-  });
-  return JSON.parse(accountJSON);
 };
 
 const deposit = () => {
